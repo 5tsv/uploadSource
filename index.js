@@ -95,11 +95,24 @@ async function calculateMD5(content) {
 
 // 计算 SHA1 哈希值
 async function calculateSHA(content) {
-  const header = `blob ${content.length}\0`;
+  const encoder = new TextEncoder();
+  const contentBytes = encoder.encode(content);
+  
+  // Git Blob 头部： "blob <size>\0"
+  const header = `blob ${contentBytes.length}\0`;
+  const headerBytes = encoder.encode(header);
+
   // 拼接头部和内容
-  const store = Buffer.concat([Buffer.from(header), Buffer.from(content)]);
-  // 计算 SHA-1
-  return crypto.createHash('sha1').update(store).digest('hex');
+  const totalBytes = new Uint8Array(headerBytes.length + contentBytes.length);
+  totalBytes.set(headerBytes, 0);
+  totalBytes.set(contentBytes, headerBytes.length);
+
+  // 计算 SHA-1 哈希
+  const hashBuffer = await crypto.subtle.digest('SHA-1', totalBytes);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  
+  // 转换为十六进制字符串
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // 生成时间文件名
