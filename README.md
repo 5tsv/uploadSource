@@ -10,4 +10,4 @@
 
 ### 一键部署
 
-   [![部署到Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/5tsv/uploadSource)
+   [![一键部署到Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/5tsv/uploadSource)
