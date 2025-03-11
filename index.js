@@ -32,8 +32,8 @@ async function handleRequest(request) {
     // 读取文件内容
     const content = await file.text();
     // 计算文件的 MD5 哈希值
-    const md5 = await calculateMD5(content)
-    const githubFileName = `${md5}.json`
+    const sha = await calculateSHA(content)
+    const githubFileName = `${sha}.json`
 
     // 构造路径参数（新增部分开始）-----
     const encodedPath = path
@@ -65,6 +65,7 @@ async function handleRequest(request) {
       body: JSON.stringify({
         message: `Upload ${githubFileName}`,
         content: btoa(unescape(encodeURIComponent(content))),
+        sha: sha,
         branch: 'main'
       })
     })
@@ -83,14 +84,13 @@ async function handleRequest(request) {
   }
 }
 
-// 计算 MD5 哈希值
-async function calculateMD5(content) {
+// 计算 SHA 哈希值
+async function calculateSHA(content) {
   const encoder = new TextEncoder()
   const data = encoder.encode(content)
-  const hashBuffer = await crypto.subtle.digest('MD5', data)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('')
-  return hashHex
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 // 生成时间文件名
