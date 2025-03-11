@@ -32,8 +32,8 @@ async function handleRequest(request) {
     // 读取文件内容
     const content = await file.text();
     // 计算文件的 MD5 哈希值
-    // const md5 = await calculateMD5(content)
-    const githubFileName = `${generateFilename()}.json`
+    const md5 = await calculateMD5(content)
+    const githubFileName = `${md5}.json`
 
     // 构造路径参数（新增部分开始）-----
     const encodedPath = path
@@ -93,7 +93,7 @@ async function calculateMD5(content) {
   return hashHex
 }
 
-// 生成文件名
+// 生成时间文件名
 function generateFilename() {
   const pad = n => n.toString().padStart(2, '0');
   const now = new Date();
