@@ -84,13 +84,22 @@ async function handleRequest(request) {
   }
 }
 
-// 计算 SHA 哈希值
-async function calculateSHA(content) {
+// 计算 MD5 哈希值
+async function calculateMD5(content) {
   const encoder = new TextEncoder()
   const data = encoder.encode(content)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashBuffer = await crypto.subtle.digest('MD5', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// 计算 SHA1 哈希值
+async function calculateSHA(content) {
+  const header = `blob ${content.length}\0`;
+  // 拼接头部和内容
+  const store = Buffer.concat([Buffer.from(header), Buffer.from(content)]);
+  // 计算 SHA-1
+  return crypto.createHash('sha1').update(store).digest('hex');
 }
 
 // 生成时间文件名
