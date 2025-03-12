@@ -90,7 +90,7 @@ function arrayBufferToBase64(buffer) {
   return btoa(String.fromCharCode(...new Uint8Array(buffer)));
 }
 
-// 计算SHA1（用于Git Blob）
+// 计算SHA1和MD5
 async function calculateHash(contentBuffer) {
   const contentBytes = new Uint8Array(contentBuffer);
 
@@ -114,4 +114,18 @@ async function calculateHash(contentBuffer) {
   const md5Array = Array.from(new Uint8Array(md5Buffer));
   const md5 = md5Array.map(b => b.toString(16).padStart(2, '0')).join('');
   return [sha, md5];
+}
+
+// 上传时间 yyyyMMddHHmmss
+function uploadTime() {
+  const pad = n => n.toString().padStart(2, '0');
+  const now = new Date();
+  return [
+    now.getFullYear(),
+    pad(now.getMonth() + 1),
+    pad(now.getDate()),
+    pad(now.getHours()),
+    pad(now.getMinutes()),
+    pad(now.getSeconds())
+  ].join('');
 }
