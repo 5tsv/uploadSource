@@ -70,9 +70,12 @@ async function handleRequest(request) {
 			try {
 				sha = fileList.json().filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
-			return new Response(fileList.body, {
+				return new Response(JSON.stringify({
+			msg: e.message, // 显示更清晰的错误信息
+			code: 500
+		}), {
 			status: 500
-		});
+		})
 			}
 		}
 		githubUrl += encodedPath ? `/${githubFileName}` : githubFileName;
