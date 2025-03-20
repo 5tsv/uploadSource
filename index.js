@@ -58,7 +58,7 @@ async function handleRequest(request) {
 		// GitHub API请求
 		let githubUrl = `https://api.github.com/repos/${encodeURIComponent(repoOwner)}/${encodeURIComponent(repoName)}/contents/${encodedPath}`;
 		if (filename) {
-			const fileList = await fetch(githubUrl, {
+			const fileList = await fetch(new Request(githubUrl, {
 				method: 'GET',
 				headers: {
 					'Authorization': `token ${token}`,
@@ -66,7 +66,7 @@ async function handleRequest(request) {
 					'Content-Type': 'application/json',
 					'Accept': 'application/vnd.github+json'
 				}
-			});
+			}));
 			try {
 				sha = JSON.parse(fileList.body).filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
