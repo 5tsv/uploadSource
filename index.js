@@ -71,17 +71,7 @@ async function handleRequest(request) {
 			try {
 				const deFileName=decodeURIComponent(githubFileName)
 				sha = fileList.filter(f => f.name == deFileName)[0].sha
-			} catch (e) { 
-				return new Response(JSON.stringify({
-				filter:fileList.filter(f => f.name == githubFileName),
-				resp:fileList,
-				gf:githubFileName,
-			msg: e.message, // 显示更清晰的错误信息
-			code: 500
-		}), {
-			status: 500
-		})
-			}
+			} catch (_) {}
 		}
 		githubUrl += encodedPath ? `/${githubFileName}` : githubFileName;
 		const githubRequest = new Request(githubUrl, {
