@@ -58,7 +58,7 @@ async function handleRequest(request) {
 		// GitHub API请求
 		let githubUrl = `https://api.github.com/repos/${encodeURIComponent(repoOwner)}/${encodeURIComponent(repoName)}/contents/${encodedPath}`;
 		if (filename) {
-			const fileList = await fetch(githubUrl, {
+			const resp = await fetch(githubUrl, {
 				method: 'GET',
 				headers: {
 					'Authorization': `token ${token}`,
@@ -66,12 +66,13 @@ async function handleRequest(request) {
 					'Content-Type': 'application/json',
 					'Accept': 'application/vnd.github+json'
 				}
+			const fileList=resp.json()
 			});
 			try {
-				sha = fileList.json().filter(f => f.name == githubFileName)[0].sha
+				sha = fileList.filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
 				return new Response(JSON.stringify({
-			msg: e.message, // 显示更清晰的错误信息
+			msg: fileList, // 显示更清晰的错误信息
 			code: 500
 		}), {
 			status: 500
