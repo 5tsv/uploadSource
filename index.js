@@ -66,8 +66,8 @@ async function handleRequest(request) {
 					'Content-Type': 'application/json',
 					'Accept': 'application/vnd.github+json'
 				}
-			const fileList=resp.json()
 			});
+			const fileList=resp.json()
 			try {
 				sha = fileList.filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
