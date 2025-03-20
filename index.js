@@ -70,7 +70,7 @@ async function handleRequest(request) {
 			try {
 				sha = JSON.parse(fileList.body).filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
-			return new Response(fileList, {
+			return new Response(fileList.body, {
 			status: 500
 		});
 			}
