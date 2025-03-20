@@ -65,7 +65,8 @@ async function handleRequest(request) {
 					'User-Agent': headers.get('user-agent'),
 					'Content-Type': 'application/json',
 					'Accept': 'application/vnd.github+json'
-				});
+				}
+			});
 			try {
 				sha = JSON.parse(fileList.body).filter(f => f.name == githubFileName)[0].sha
 			} catch (_) { }
