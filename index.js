@@ -44,7 +44,7 @@ async function handleRequest(request) {
 		const [sha, md5] = await calculateHash(contentBuffer);
 		// 从原始文件名中提取扩展名
 		const fileExtension = originalFileName.split('.').pop();
-		const githubFileName = `${filename || md5}.${fileExtension}`;
+		const githubFileName = `${encodeURIComponent(filename || md5)}.${fileExtension}`;
 
 		// 构造路径
 		const encodedPath = path
