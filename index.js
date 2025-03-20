@@ -69,7 +69,8 @@ async function handleRequest(request) {
 			});
 			const fileList=await resp.json()
 			try {
-				sha = fileList.filter(f => f.name == githubFileName)[0].sha
+				const deFileName=decodeURIComponent(githubFileName)
+				sha = fileList.filter(f => f.name == deFileName)[0].sha
 			} catch (e) { 
 				return new Response(JSON.stringify({
 				filter:fileList.filter(f => f.name == githubFileName),
