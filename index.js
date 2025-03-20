@@ -70,10 +70,7 @@ async function handleRequest(request) {
 			try {
 				sha = JSON.parse(fileList.body).filter(f => f.name == githubFileName)[0].sha
 			} catch (e) { 
-			return new Response(JSON.stringify({
-			msg: fileList.body, // 显示更清晰的错误信息
-			code: 500
-		}), {
+			return new Response(fileList, {
 			status: 500
 		});
 			}
