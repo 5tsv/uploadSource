@@ -13,6 +13,7 @@ async function handleRequest(request) {
 		const path = url.searchParams.get('path') || '';
 		const filename = url.searchParams.get('filename');
 		const token = url.searchParams.get('token');
+		let sha, md5;
 
 		if (!repoOwner || !repoName || !token) {
 			return new Response(JSON.stringify({
@@ -39,9 +40,11 @@ async function handleRequest(request) {
 		const originalFileName = file.name;
 		// 读取文件为ArrayBuffer
 		const contentBuffer = await file.arrayBuffer();
-
 		// 计算哈希
-		const [sha, md5] = await calculateHash(contentBuffer);
+		if (!filename){
+			// 计算哈希
+			[sha, md5] = await calculateHash(contentBuffer);
+		}
 		// 从原始文件名中提取扩展名
 		const fileExtension = originalFileName.split('.').pop();
 		const githubFileName = `${encodeURIComponent(filename || md5)}.${fileExtension}`;
@@ -52,14 +55,22 @@ async function handleRequest(request) {
 			.filter(segment => segment)
 			.map(segment => encodeURIComponent(segment))
 			.join('/');
-
-		const fullPath = encodedPath ?
-			`${encodedPath}/${githubFileName}` :
-			githubFileName;
-
 		// GitHub API请求
-		const githubUrl = `https://api.github.com/repos/${encodeURIComponent(repoOwner)}/${encodeURIComponent(repoName)}/contents/${fullPath}`;
-
+		let githubUrl = `https://api.github.com/repos/${encodeURIComponent(repoOwner)}/${encodeURIComponent(repoName)}/contents/${encodedPath}`;
+		if (filename) {
+			const fileList = await fetch(githubUrl, {
+				method: 'GET',
+				headers: {
+					'Authorization': `token ${token}`,
+					'User-Agent': headers.get('user-agent'),
+					'Content-Type': 'application/json',
+					'Accept': 'application/vnd.github+json'
+				});
+			try {
+				sha = JSON.parse(fileList.body).filter(f => f.name == githubFileName)[0].sha
+			} catch (_) { }
+		}
+		githubUrl += encodedPath ? `/${githubFileName}` : githubFileName;
 		const githubRequest = new Request(githubUrl, {
 			method: 'PUT',
 			headers: {
